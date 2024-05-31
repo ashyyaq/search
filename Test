@@ -1,0 +1,42 @@
+#include <iostream>
+#include <locale>
+#include <Windows.h>
+
+using namespace std;
+
+typedef bool(*Search)(const char*, const char*);
+
+int main() {
+    setlocale(LC_ALL, "");
+
+    HINSTANCE load;
+    Search search;
+
+    char inputString[100];
+    char inputChars[100];
+
+    cout << "введите строку: ";
+    cin.getline(inputString, 100);
+
+    cout << "введите символы для поиска: ";
+    cin.getline(inputChars, 100);
+
+    load = LoadLibrary(TEXT("DinamicLibrary.dll"));
+    if (load != NULL) {
+
+        search = (Search)GetProcAddress(load, "CharSearch");
+        if (NULL != search) {
+
+            bool result = search(inputString, inputChars);
+            if (result) {
+                cout << "символ найден" << endl;
+            }
+            else {
+                cout << "символа нет" << endl;
+            }
+        }
+
+        FreeLibrary(load);
+    }
+    return 0;
+}
